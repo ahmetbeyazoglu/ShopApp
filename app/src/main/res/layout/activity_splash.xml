@@ -10,4 +10,19 @@
     android:background="@drawable/img_splash_background"
     tools:context=".SplashActivity">
 
+    <com.herpestes.myshoppal.utils.MSPTextViewBold
+        android:id="@+id/tv_app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textSize="@dimen/splash_title_text_size"
+        app:layout_constraintBaseline_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintBaseline_toTopOf="parent">
+
+
+    </com.herpestes.myshoppal.utils.MSPTextViewBold>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

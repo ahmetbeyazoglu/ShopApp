@@ -1,6 +1,7 @@
 package com.herpestes.myshoppal
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -31,6 +32,9 @@ class SplashActivity : AppCompatActivity() {
             },
             2500
         )
+
+        //val typeface: Typeface = Typeface.createFromAsset(assets, "Montserrat-Bold.ttf")
+        //tv_app_name.typeface = typeface
 
     }
 }
