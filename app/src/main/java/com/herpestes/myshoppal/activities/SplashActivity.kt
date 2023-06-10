@@ -1,14 +1,13 @@
-package com.herpestes.myshoppal
+package com.herpestes.myshoppal.activities
 
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowManager
+import com.herpestes.myshoppal.R
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
