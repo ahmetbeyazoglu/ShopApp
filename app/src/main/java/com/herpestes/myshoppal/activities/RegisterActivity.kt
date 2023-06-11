@@ -1,14 +1,16 @@
 package com.herpestes.myshoppal.activities
 
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.WindowInsets
 import android.view.WindowManager
 import com.herpestes.myshoppal.R
 
 
-class RegisterActivity : AppCompatActivity() {
+class RegisterActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -23,9 +25,63 @@ class RegisterActivity : AppCompatActivity() {
             )
         }
 
-
-
-
+        tv_login.setOnClickListener{
+            // launch the register screen when the user clicks on the text
+            val intent = Intent(this@RegisterActivity, LoginActivity ::class.java)
+            startActivity(intent)
         }
 
     }
+    private fun setupActionBar(){
+        setSupportActionBar(toolbar_register_activity)
+
+        val actionBar = supportActionBar
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
+        }
+        toolbar_register_activity.setNavigationOnClickLister{ onBackPressed() }
+    }
+
+    private fun validateRegisterDetails(): Boolean {
+        return when {
+            TextUtils.isEmpty(binding.etFirstName.text.toString().trim { it <= ' ' }) -> {
+                showErrorSnackBar("Please enter first name.", true)
+                false
+            }
+            TextUtils.isEmpty(binding.etLastName.text.toString().trim { it <= ' ' }) -> {
+                showErrorSnackBar("Please enter last name.", true)
+                false
+            }
+            TextUtils.isEmpty(binding.etEmail.text.toString().trim { it <= ' ' }) -> {
+                showErrorSnackBar("Please enter an email id.", true)
+                false
+            }
+            TextUtils.isEmpty(binding.etPassword.text.toString().trim { it <= ' ' }) -> {
+                showErrorSnackBar("Please enter a password.", true)
+                false
+            }
+            TextUtils.isEmpty(binding.etConfirmPassword.text.toString().trim { it <= ' ' }) -> {
+                showErrorSnackBar("Please enter confirm password.", true)
+                false
+            }
+            binding.etPassword.text.toString()
+                .trim { it <= ' ' } != binding.etConfirmPassword.text.toString()
+                .trim { it <= ' ' } -> {
+                showErrorSnackBar("Password and confirm password does not match", true)
+                false
+            }
+            !binding.cbTermsAndCondition.isChecked -> {
+                showErrorSnackBar("Please agree terms and conditions.", true)
+                false
+            }
+            else -> {
+                true
+            }
+
+        }
+    }
+
+
+
+}

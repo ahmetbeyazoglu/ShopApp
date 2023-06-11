@@ -1,5 +1,6 @@
 package com.herpestes.myshoppal.activities
 
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,6 +23,11 @@ class LoginActivity : AppCompatActivity() {
             )
         }
 
+        tv_register.setOnClickListener{
+            // launch the register screen when the user clicks on the text
+            val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
+            startActivity(intent)
+        }
 
 
 
