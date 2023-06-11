@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.WindowInsets
 import android.view.WindowManager
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.herpestes.myshoppal.R
 
 
@@ -25,10 +28,16 @@ class RegisterActivity : BaseActivity() {
             )
         }
 
+        setupActionBar()
+
         tv_login.setOnClickListener{
             // launch the register screen when the user clicks on the text
             val intent = Intent(this@RegisterActivity, LoginActivity ::class.java)
             startActivity(intent)
+        }
+
+        btn_register.setOnClickListener{
+            validateRegisterDetails()
         }
 
     }
@@ -79,6 +88,43 @@ class RegisterActivity : BaseActivity() {
                 true
             }
 
+        }
+    }
+    private fun registerUser() {
+        if (validateRegisterDetails()) {
+            showProgressDialog(getString(R.string.please_wait))
+
+            val email: String = binding.etEmail.text.toString().trim { it <= ' ' }
+            val password: String = binding.etPassword.text.toString().trim { it <= ' ' }
+
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val firebaseUser: FirebaseUser = task.result!!.user!!
+                        val userId = firebaseUser.uid
+
+                        val user = User(userId,
+                            binding.etFirstName.text.toString().trim { it <= ' ' },
+                            binding.etLastName.text.toString().trim { it <= ' ' },
+                            binding.etEmail.text.toString().trim { it <= ' ' })
+
+                        //Register the user to the FireStore firebase
+                        FireStoreClass().registerUser(this, user)
+                        //getting details and logged in the user
+                        FireStoreClass().getUserDetails(this@RegisterActivity)
+                    } else {
+                        hideProgressDialog()
+                        Toast.makeText(
+                            this@RegisterActivity,
+                            task.exception!!.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }.addOnFailureListener { exception ->
+                    hideProgressDialog()
+                    Toast.makeText(this@RegisterActivity, exception.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
         }
     }
 
