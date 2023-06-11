@@ -7,10 +7,11 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import com.herpestes.myshoppal.R
 
-class LoginActivity : AppCompatActivity() {
+
+class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_register)
 
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
@@ -25,6 +26,6 @@ class LoginActivity : AppCompatActivity() {
 
 
 
+        }
 
     }
-}
