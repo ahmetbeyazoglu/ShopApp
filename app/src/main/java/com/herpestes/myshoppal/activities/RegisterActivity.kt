@@ -31,9 +31,7 @@ class RegisterActivity : BaseActivity() {
         setupActionBar()
 
         tv_login.setOnClickListener{
-            // launch the register screen when the user clicks on the text
-            val intent = Intent(this@RegisterActivity, LoginActivity ::class.java)
-            startActivity(intent)
+            onBackPressed()
         }
 
         btn_register.setOnClickListener{
