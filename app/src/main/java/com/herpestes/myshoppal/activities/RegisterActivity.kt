@@ -125,7 +125,26 @@ class RegisterActivity : BaseActivity() {
                 }
         }
     }
+    fun userRegistrationSuccess() {
+        hideProgressDialog()
+        Toast.makeText(this@RegisterActivity, "You are registered successfully", Toast.LENGTH_SHORT)
+            .show()
+    }
 
+    fun userLoggedInSuccess(user: User) {
+        hideProgressDialog()
+        val intent = Intent(this@RegisterActivity, UserProfileActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        intent.putExtra(Constants.EXTRA_USER_DETAILS, user)
+        startActivity(intent)
+        finish()
+    }
+
+    override fun onDestroy() {
+        dismissProgressDialog()
+        super.onDestroy()
+
+    }
 
 
 }
