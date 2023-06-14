@@ -28,5 +28,17 @@
     <string name="forgot_password_title_description">Enter your username and e-mail address we\'ll send you a email to reset your password</string>
     <string name="email_sent_successfully">Email sent successfully to reset your password!</string>
 
+    <!-- user profile activity -->
+    <string name="title_complete_profile">COMPLETE PROFILE</string>
+    <string name="et_hint_mobile_number">Mobile Number</string>
+    <string name="rb_lbl_male">MALE </string>
+    <string name="rb_label_female">FEMALE</string>
+    <string name="btn_lbl_save">Save</string>
+    <string name="read_storage_permission_denied">Oops! It seems like you just denied the permission needed. You can also allow it from settings.</string>
+    <string name="image_selection_failed">Something went wrong during image selection</string>
+
+    <string name="error_mobile_number">Please enter mobile number</string>
+
+    <string name="profile_update_success_message">Profile updated successfully</string>
 
 </resources>
