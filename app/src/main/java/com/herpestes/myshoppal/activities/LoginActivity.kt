@@ -9,8 +9,11 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
+import com.google.android.gms.common.internal.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.herpestes.myshoppal.R
+import com.herpestes.myshoppal.firestore.FirestoreClass
+import com.herpestes.myshoppal.models.User
 
 class LoginActivity : BaseActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +38,24 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         binding.tvRegister.setOnClickListener (this)
         binding.btnLogin.setOnClickListener(this)
         binding.tvForgotPassword.setOnClickListener(this)
+    }
+
+    fun userLoggedInSuccess(user : User){
+        hideProgressDialog()
+
+        if(user.profileCompleted == 0){
+            val intent = Intent(this@LoginActivity, UserProfileActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.putExtra(Constants.EXTRA_USER_DETAILS,user)
+            startActivity(intent)
+        }else{
+            val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+        finish()
     }
 
     override fun onClick(v: View?) {
@@ -82,7 +103,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        FireStoreClass().getUserDetails(this@LoginActivity)
+                        FirestoreClass().getUserDetails(this@LoginActivity)
 
                     } else {
                         hideProgressDialog()

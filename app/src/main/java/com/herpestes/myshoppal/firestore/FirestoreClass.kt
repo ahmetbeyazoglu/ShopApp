@@ -3,6 +3,7 @@ package com.herpestes.myshoppal.firestore
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import android.provider.Settings
 import android.provider.SyncStateContract
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
@@ -69,7 +70,7 @@ class FirestoreClass {
                 when (activity) {
                     is LoginActivity -> activity.hideProgressDialog()
                     is RegisterActivity -> activity.hideProgressDialog()
-                    is Settings     Activity -> activity.hideProgressDialog()
+                    is Settings Activity -> activity.hideProgressDialog()
                 }
                 Log.e(activity.javaClass.simpleName, exception.message.toString())
             }
