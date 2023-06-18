@@ -40,5 +40,6 @@
     <string name="error_mobile_number">Please enter mobile number</string>
 
     <string name="profile_update_success_message">Profile updated successfully</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
 
 </resources>
