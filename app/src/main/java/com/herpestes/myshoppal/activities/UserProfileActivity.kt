@@ -16,6 +16,7 @@ import com.herpestes.myshoppal.R
 import com.herpestes.myshoppal.databinding.ActivityUserProfileBinding
 import com.herpestes.myshoppal.models.User
 import com.herpestes.myshoppal.utils.Constants
+import com.herpestes.myshoppal.utils.GlideLoader
 import java.io.IOException
 
 class UserProfileActivity : BaseActivity(), View.OnClickListener {
