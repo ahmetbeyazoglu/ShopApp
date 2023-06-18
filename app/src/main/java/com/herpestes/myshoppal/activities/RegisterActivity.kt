@@ -11,43 +11,83 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.herpestes.myshoppal.R
+import com.herpestes.myshoppal.databinding.ActivityRegisterBinding
+import com.herpestes.myshoppal.firestore.FireStoreClass
+import com.herpestes.myshoppal.models.User
+import com.herpestes.myshoppal.utils.Constants
 
 
 class RegisterActivity : BaseActivity() {
+    private lateinit var binding: ActivityRegisterBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        @Suppress("DEPRECATION")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        setUpActionBar()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
-        }else{
+        } else {
+            @Suppress("DEPRECATION")
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
-
-        setupActionBar()
-
-        tv_login.setOnClickListener{
+        binding.tvLogin.setOnClickListener {
             onBackPressed()
         }
-
-        btn_register.setOnClickListener{
-            validateRegisterDetails()
+        binding.btnRegister.setOnClickListener {
+            registerUser()
         }
-
     }
-    private fun setupActionBar(){
-        setSupportActionBar(toolbar_register_activity)
 
-        val actionBar = supportActionBar
-        if(actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
+    private fun setUpActionBar() {
+        setSupportActionBar(binding.toolbarRegisterActivity)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_black_back_24)
+        binding.toolbarRegisterActivity.setNavigationOnClickListener {
+            onBackPressed()
         }
-        toolbar_register_activity.setNavigationOnClickLister{ onBackPressed() }
+    }
+
+    private fun registerUser() {
+        if (validateRegisterDetails()) {
+            showProgressDialog(getString(R.string.please_wait))
+
+            val email: String = binding.etEmail.text.toString().trim { it <= ' ' }
+            val password: String = binding.etPassword.text.toString().trim { it <= ' ' }
+
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val firebaseUser: FirebaseUser = task.result!!.user!!
+                        val userId = firebaseUser.uid
+
+                        val user = User(userId,
+                            binding.etFirstName.text.toString().trim { it <= ' ' },
+                            binding.etLastName.text.toString().trim { it <= ' ' },
+                            binding.etEmail.text.toString().trim { it <= ' ' })
+
+                        //Register the user to the FireStore firebase
+                        FireStoreClass().registerUser(this, user)
+                        //getting details and logged in the user
+                        FireStoreClass().getUserDetails(this@RegisterActivity)
+                    } else {
+                        hideProgressDialog()
+                        Toast.makeText(
+                            this@RegisterActivity,
+                            task.exception!!.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }.addOnFailureListener { exception ->
+                    hideProgressDialog()
+                    Toast.makeText(this@RegisterActivity, exception.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+        }
     }
 
     private fun validateRegisterDetails(): Boolean {
@@ -88,43 +128,7 @@ class RegisterActivity : BaseActivity() {
 
         }
     }
-    private fun registerUser() {
-        if (validateRegisterDetails()) {
-            showProgressDialog(getString(R.string.please_wait))
 
-            val email: String = binding.etEmail.text.toString().trim { it <= ' ' }
-            val password: String = binding.etPassword.text.toString().trim { it <= ' ' }
-
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val firebaseUser: FirebaseUser = task.result!!.user!!
-                        val userId = firebaseUser.uid
-
-                        val user = User(userId,
-                            binding.etFirstName.text.toString().trim { it <= ' ' },
-                            binding.etLastName.text.toString().trim { it <= ' ' },
-                            binding.etEmail.text.toString().trim { it <= ' ' })
-
-                        //Register the user to the FireStore firebase
-                        FireStoreClass().registerUser(this, user)
-                        //getting details and logged in the user
-                        FireStoreClass().getUserDetails(this@RegisterActivity)
-                    } else {
-                        hideProgressDialog()
-                        Toast.makeText(
-                            this@RegisterActivity,
-                            task.exception!!.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }.addOnFailureListener { exception ->
-                    hideProgressDialog()
-                    Toast.makeText(this@RegisterActivity, exception.message, Toast.LENGTH_SHORT)
-                        .show()
-                }
-        }
-    }
     fun userRegistrationSuccess() {
         hideProgressDialog()
         Toast.makeText(this@RegisterActivity, "You are registered successfully", Toast.LENGTH_SHORT)
@@ -145,6 +149,5 @@ class RegisterActivity : BaseActivity() {
         super.onDestroy()
 
     }
-
 
 }

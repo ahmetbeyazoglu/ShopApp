@@ -12,50 +12,60 @@ import android.widget.Toast
 import com.google.android.gms.common.internal.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.herpestes.myshoppal.R
+import com.herpestes.myshoppal.databinding.ActivityLoginBinding
+import com.herpestes.myshoppal.firestore.FireStoreClass
 import com.herpestes.myshoppal.firestore.FirestoreClass
 import com.herpestes.myshoppal.models.User
 
-class LoginActivity : BaseActivity(), View.OnClickListener {
+class LoginActivity : BaseActivity() , View.OnClickListener {
+    private lateinit var binding : ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        @Suppress("DEPRECATION")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
         }else{
+            @Suppress("DEPRECATION")
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
-        }
-
-        tv_register.setOnClickListener{
-            // launch the register screen when the user clicks on the text
-            val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
-            startActivity(intent)
         }
         binding.tvRegister.setOnClickListener (this)
         binding.btnLogin.setOnClickListener(this)
         binding.tvForgotPassword.setOnClickListener(this)
+
     }
 
-    fun userLoggedInSuccess(user : User){
-        hideProgressDialog()
+    private fun loginUser() {
 
-        if(user.profileCompleted == 0){
-            val intent = Intent(this@LoginActivity, UserProfileActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-            intent.putExtra(Constants.EXTRA_USER_DETAILS,user)
-            startActivity(intent)
-        }else{
-            val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+        if (validateLoginDetails()) {
+
+            showProgressDialog(getString(R.string.please_wait))
+
+            val email: String = binding.etEmail.text.toString().trim { it <= ' ' }
+            val password: String = binding.etPassword.text.toString().trim { it <= ' ' }
+
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        FireStoreClass().getUserDetails(this@LoginActivity)
+
+                    } else {
+                        hideProgressDialog()
+                        Toast.makeText(
+                            this@LoginActivity,
+                            task.exception!!.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }.addOnFailureListener { exception ->
+                    hideProgressDialog()
+                    Toast.makeText(this@LoginActivity, exception.message, Toast.LENGTH_SHORT).show()
+                }
         }
-        finish()
     }
 
     override fun onClick(v: View?) {
@@ -91,33 +101,27 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
         }
     }
-    private fun loginUser() {
+    fun userLoggedInSuccess(user : User){
+        hideProgressDialog()
 
-        if (validateLoginDetails()) {
-
-            showProgressDialog(getString(R.string.please_wait))
-
-            val email: String = binding.etEmail.text.toString().trim { it <= ' ' }
-            val password: String = binding.etPassword.text.toString().trim { it <= ' ' }
-
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        FirestoreClass().getUserDetails(this@LoginActivity)
-
-                    } else {
-                        hideProgressDialog()
-                        Toast.makeText(
-                            this@LoginActivity,
-                            task.exception!!.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }.addOnFailureListener { exception ->
-                    hideProgressDialog()
-                    Toast.makeText(this@LoginActivity, exception.message, Toast.LENGTH_SHORT).show()
-                }
+        if(user.profileCompleted == 0){
+            val intent = Intent(this@LoginActivity, UserProfileActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.putExtra(com.herpestes.myshoppal.utils.Constants.EXTRA_USER_DETAILS,user)
+            startActivity(intent)
+        }else{
+            val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
+        finish()
+    }
+    override fun onDestroy() {
+        dismissProgressDialog()
+        super.onDestroy()
+
     }
 
 }

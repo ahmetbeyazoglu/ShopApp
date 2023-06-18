@@ -14,6 +14,8 @@ import androidx.core.content.ContextCompat
 import com.herpestes.myshoppal.Manifest
 import com.herpestes.myshoppal.R
 import com.herpestes.myshoppal.databinding.ActivityUserProfileBinding
+import com.herpestes.myshoppal.firestore.FireStoreClass
+import com.herpestes.myshoppal.firestore.FirestoreClass
 import com.herpestes.myshoppal.models.User
 import com.herpestes.myshoppal.utils.Constants
 import com.herpestes.myshoppal.utils.GlideLoader
@@ -124,13 +126,13 @@ class UserProfileActivity : BaseActivity(), View.OnClickListener {
             R.id.iv_user_photo -> {
                 if (ContextCompat.checkSelfPermission(
                         this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
                     Constants.showImageChooser(this)
                 } else {
                     ActivityCompat.requestPermissions(
-                        this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                        this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
                         Constants.READ_STORAGE_PERMISSION_CODE
                     )
                 }
@@ -239,4 +241,4 @@ class UserProfileActivity : BaseActivity(), View.OnClickListener {
 
         updateUserProfileDetails()
     }
-}
+}}
